@@ -922,7 +922,7 @@ class SubData:
                     client.subscribe(f"openWB/system/device/{index}/component/{index_second}/simulation", 2)
                     self.processing_counter.add_task()
                     Pub().pub("openWB/system/subdata_initialized", True)
-            elif "mqtt" and "bridge" in msg.topic:
+            elif "mqtt" in msg.topic and "bridge" in msg.topic:
                 # do not reconfigure mqtt bridges if topic is received on startup
                 if self.event_subdata_initialized.is_set():
                     index = get_index(msg.topic)
@@ -937,7 +937,7 @@ class SubData:
                                            MessageType.ERROR)
                 else:
                     log.debug("skipping mqtt bridge message on startup")
-            elif "mqtt" and "valid_partner_ids" in msg.topic:
+            elif "mqtt" in msg.topic and "valid_partner_ids" in msg.topic:
                 # duplicate topic for remote support service
                 log.debug(f"received valid partner ids: {decode_payload(msg.payload)}")
                 Pub().pub("openWB-remote/valid_partner_ids", decode_payload(msg.payload))

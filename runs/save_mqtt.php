@@ -8,6 +8,9 @@ $mosquittoConfDir = "/etc/mosquitto/conf_local.d/";
 
 if ($argc > 2) {
 	$bridgeId = $argv[1];
+	if (!preg_match('/^[0-9]+$/', $bridgeId)) {
+		cleanAndExit("Invalid bridge id: Only digits are allowed.");
+	}
 	$configuration = json_decode($argv[2]);
 } else {
 	cleanAndExit("No id [1] and configuration [2] provided!");
@@ -25,7 +28,7 @@ function removeConfigFile($fileName)
 {
 	if (file_exists($fileName)) {
 		debugPrint("Konfigurationsdatei '$fileName' wird gelöscht.");
-		exec("sudo rm $fileName");
+		exec("sudo rm " . escapeshellarg($fileName));
 		return 0;
 	} else {
 		return 1;
@@ -346,7 +349,7 @@ if ($configuration == "" || $configuration->active != true) {
 	debugPrint("Now closing '$configFile' ('$fileToUseForNewConfig')");
 
 	fclose($configFile);
-	exec("sudo mv $fileToUseForNewConfig $mosquittoConfDir$bridgeFileName");
+	exec("sudo mv " . escapeshellarg($fileToUseForNewConfig) . " " . escapeshellarg($mosquittoConfDir . $bridgeFileName));
 }
 
 if (!$debug) {

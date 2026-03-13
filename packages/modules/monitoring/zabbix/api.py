@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os
+import subprocess
 from typing import List
 from modules.common.abstract_device import DeviceDescriptor
 from modules.monitoring.zabbix.config import Zabbix
@@ -20,9 +20,9 @@ def set_value(lines: List[str], key: str, value: str):
 
 
 def create_config(config: Zabbix):
-    os.system(f"sudo touch {KEY_FILE}")
-    os.system(f"sudo chmod 666 {KEY_FILE}")
-    os.system(f"sudo chmod 666 {CONFIG_FILE}")
+    subprocess.run(["sudo", "touch", KEY_FILE], check=False)
+    subprocess.run(["sudo", "chmod", "666", KEY_FILE], check=False)
+    subprocess.run(["sudo", "chmod", "666", CONFIG_FILE], check=False)
     with open(KEY_FILE, "w") as key_file:
         key_file.write(config.configuration.psk_key)
     with open(CONFIG_FILE, "r+") as config_file:
@@ -41,14 +41,14 @@ def create_config(config: Zabbix):
 
 def create_monitoring(config: Zabbix):
     def start_monitoring():
-        os.system("sudo ./runs/install_zabbix.sh")
+        subprocess.run(["sudo", "./runs/install_zabbix.sh"], check=False)
         create_config(config)
-        os.system("sudo systemctl restart zabbix-agent2")
-        os.system("sudo systemctl enable zabbix-agent2")
+        subprocess.run(["sudo", "systemctl", "restart", "zabbix-agent2"], check=False)
+        subprocess.run(["sudo", "systemctl", "enable", "zabbix-agent2"], check=False)
 
     def stop_monitoring():
-        os.system("sudo systemctl stop zabbix-agent2")
-        os.system("sudo systemctl disable zabbix-agent2")
+        subprocess.run(["sudo", "systemctl", "stop", "zabbix-agent2"], check=False)
+        subprocess.run(["sudo", "systemctl", "disable", "zabbix-agent2"], check=False)
     return ConfigurableMonitoring(start_monitoring, stop_monitoring)
 
 
