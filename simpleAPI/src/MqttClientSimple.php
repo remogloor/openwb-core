@@ -100,7 +100,7 @@ class MqttClient
 
         // Extra-Argumente hinzufügen
         foreach ($extraArgs as $arg) {
-            $cmd .= " " . $arg;
+            $cmd .= " " . escapeshellarg($arg);
         }
 
         return $cmd;
